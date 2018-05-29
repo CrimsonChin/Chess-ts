@@ -1,0 +1,84 @@
+<html>
+    <head>
+        <script src="src/Chess.js" ></script>
+    </head>
+    <style>
+        h1, h2, h3, p, label, input {
+            font-family: Consolas,monaco,monospace; 
+        }
+    </style>
+    <body>
+        <h1>Chess TS</h1>
+        <p>Exploring typescript with a <a href="https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation">FEN</a> parser and chessboard rendering app.</p>
+        
+        <br />
+        <input id="fenRecord" style="width: 420px;" type="text" value="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"></input>
+        <button onclick="create()">Create Game</button>
+
+        <br/>
+        
+        <p id="players-turn"></p>
+        
+        <br />        
+        
+        <label for="from">From:</label>
+        <input id="from" style="width: 100px;" type="text" placeholder="a2" value=""></input>
+        <label for="to">To:</label>
+        <input id="to" style="width: 100px;" type="text" placeholder="a3" value=""></input>
+        <button onclick="move()">Move</button>
+        
+        <br />
+
+        <p id="board" style="white-space: pre-wrap; "></p>
+        
+        <h2>Move History</h2>
+
+        <ul id="game-log">
+            
+        </ul>
+       
+    </body>
+</html>
+
+<script>
+    
+    var chess = null;
+
+    function create() {
+        var fenRecord = document.getElementById("fenRecord").value;
+        chess = new Chess(fenRecord);
+
+         drawBoard();
+
+         updateGameLog();
+    }
+
+    function move(){
+        var from = document.getElementById("from").value;
+        var to = document.getElementById("to").value;
+
+        chess.move(from, to);
+
+        drawBoard();
+
+        updateGameLog();
+    }
+
+    function drawBoard() {
+        var ascii = chess.ascii();
+
+        var board = document.getElementById("board");
+        board.innerHTML = ascii;
+
+        var turn = document.getElementById("players-turn");
+        turn.innerHTML = chess.playersTurn();
+    }
+
+    function updateGameLog(){
+        var node = document.createElement("LI");                 
+        var textnode = document.createTextNode(chess.FEN());        
+        node.appendChild(textnode);                              
+        document.getElementById("game-log").appendChild(node);
+    }
+
+  </script>
