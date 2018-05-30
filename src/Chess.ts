@@ -24,9 +24,15 @@ class Vector {
 }
 
 class Chess {
+    
     readonly boardLength: number = 8;
+
     private board: ChessPiece[][];
     private turn: Color;
+    private castling: string;
+    private enPassant: string;
+    private HalfMoveClock: number;
+    private FullMoveNumber: number;
 
     constructor(fen: string){
         this.board = [];
@@ -42,6 +48,11 @@ class Chess {
 
         let playersTurn = fenRecordItems[1];
         this.turn = playersTurn.toUpperCase() == "W" ? Color.White : Color.Black;
+
+        this.castling = fenRecordItems[2];
+        this.enPassant = fenRecordItems[3];
+        this.HalfMoveClock = Number(fenRecordItems[4]);
+        this.FullMoveNumber = Number(fenRecordItems[5]);
     }
 
     private setupBoard(boardString: string){
@@ -157,6 +168,7 @@ class Chess {
         }
 
         fenStr += ` ${ this.turn == Color.White ? "w" : "b" } `;
+        fenStr += ` ${ this.castling } ${ this.enPassant } ${ this.HalfMoveClock} ${this.FullMoveNumber}`;
 
         return fenStr;
     }

@@ -29,6 +29,10 @@ var Chess = /** @class */ (function () {
         this.setupBoard(boardString);
         var playersTurn = fenRecordItems[1];
         this.turn = playersTurn.toUpperCase() == "W" ? Color.White : Color.Black;
+        this.castling = fenRecordItems[2];
+        this.enPassant = fenRecordItems[3];
+        this.HalfMoveClock = Number(fenRecordItems[4]);
+        this.FullMoveNumber = Number(fenRecordItems[5]);
     }
     Chess.prototype.setupBoard = function (boardString) {
         var fenRows = boardString.split("/");
@@ -124,6 +128,7 @@ var Chess = /** @class */ (function () {
             }
         }
         fenStr += " " + (this.turn == Color.White ? "w" : "b") + " ";
+        fenStr += " " + this.castling + " " + this.enPassant + " " + this.HalfMoveClock + " " + this.FullMoveNumber;
         return fenStr;
     };
     return Chess;

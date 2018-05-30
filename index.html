@@ -42,7 +42,7 @@
         </div>
         <!-- /.row -->
         <div class="row">
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                 <h2>Board</h2>
                 <p id="board" style="white-space: pre-wrap; "></p>
             </div>
@@ -76,7 +76,7 @@
                 </form>
             </div>
 
-            <div class="col-sm-5">
+            <div class="col-sm-6">
                 <h2>History</h2>
                 <ul id="game-log">
                 </ul>
@@ -131,10 +131,10 @@
         }
 
         function updateGameLog() {
-            var node = document.createElement("LI");
+            var listItemNode = document.createElement("LI");
             var textnode = document.createTextNode(chess.FEN());
-            node.appendChild(textnode);
-            document.getElementById("game-log").appendChild(node);
+            listItemNode.appendChild(textnode);
+            document.getElementById("game-log").appendChild(listItemNode);
         }
 
         return {
