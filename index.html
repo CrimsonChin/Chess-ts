@@ -1,84 +1,147 @@
-<html>
-    <head>
-        <script src="src/Chess.js" ></script>
-    </head>
-    <style>
-        h1, h2, h3, p, label, input {
-            font-family: Consolas,monaco,monospace; 
-        }
-    </style>
-    <body>
-        <h1>Chess TS</h1>
-        <p>Exploring typescript with a <a href="https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation">FEN</a> parser and chessboard rendering app.</p>
-        
-        <br />
-        <input id="fenRecord" style="width: 420px;" type="text" value="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"></input>
-        <button onclick="create()">Create Game</button>
+<html lang="en">
 
-        <br/>
-        
-        <p id="players-turn"></p>
-        
-        <br />        
-        
-        <label for="from">From:</label>
-        <input id="from" style="width: 100px;" type="text" placeholder="a2" value=""></input>
-        <label for="to">To:</label>
-        <input id="to" style="width: 100px;" type="text" placeholder="a3" value=""></input>
-        <button onclick="move()">Move</button>
-        
-        <br />
+<head>
+    <title>Chess-ts</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <script src="src/Chess.js"></script>
+</head>
+<style>
+    h1,
+    h2,
+    h3,
+    p,
+    label,
+    input {
+        font-family: Consolas, monaco, monospace;
+    }
+</style>
 
-        <p id="board" style="white-space: pre-wrap; "></p>
-        
-        <h2>Move History</h2>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <h1>Chess TS</h1>
+                <p class="lead">Exploring typescript with a
+                    <a href="https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation">FEN</a> parsing chess app'.</p>
+            </div>
+            <!-- /.col-sm-12-->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-sm-12">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <div class="col-sm-7">
+                            <input id="fenRecord" class="col-sm-6 form-control" type="text" value="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1">
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="chessModule.createGame()">New Game</button>
+                    </div>
+                </form>
+            </div>
+            <!-- /.col-sm-12-->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-sm-4">
+                <h2>Board</h2>
+                <p id="board" style="white-space: pre-wrap; "></p>
+            </div>
 
-        <ul id="game-log">
-            
-        </ul>
-       
-    </body>
+            <div class="col-sm-3">
+                <h2>Move</h2>
+
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="players-turn">Move</label>
+                        <div class="col-sm-10">
+                            <input id="players-turn" class="form-control form-control-sm" type="text" value="" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="from">From</label>
+                        <div class="col-sm-10">
+                            <input id="from" class="form-control form-control-sm" type="text" placeholder="d2" value="">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="to">To</label>
+                        <div class="col-sm-10">
+                            <input id="to" class="form-control form-control-sm" type="text" placeholder="d3" value="">
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-primary" onclick="chessModule.movePiece()">Move</button>
+                </form>
+            </div>
+
+            <div class="col-sm-5">
+                <h2>History</h2>
+                <ul id="game-log">
+                </ul>
+            </div>
+        </div>
+        <!-- /row -->
+    </div>
+    <!-- /container-->
+</body>
+
 </html>
 
 <script>
+    var chessModule = (function () {
+        
+        var chess = null;
+
+        function createGame() {
+            var fenRecord = document.getElementById("fenRecord").value;
+            chess = new Chess(fenRecord);
+
+            var gameLog = document.getElementById("game-log");
+            while (gameLog.firstChild) {
+                gameLog.removeChild(gameLog.firstChild);
+            }
+
+            drawBoard();
+            updateGameLog();
+        }
+
+        function movePiece() {
+            var fromElement = document.getElementById("from");
+            var toElement = document.getElementById("to");
+
+            chess.move(fromElement.value, toElement.value);
+
+            fromElement.value = null;
+            toElement.value = null;
+
+            drawBoard();
+            updateGameLog();
+        }
+
+        function drawBoard() {
+            var ascii = chess.ascii();
+
+            var board = document.getElementById("board");
+            board.innerHTML = ascii;
+
+            var turn = document.getElementById("players-turn");
+            turn.value = chess.playersTurn();
+        }
+
+        function updateGameLog() {
+            var node = document.createElement("LI");
+            var textnode = document.createTextNode(chess.FEN());
+            node.appendChild(textnode);
+            document.getElementById("game-log").appendChild(node);
+        }
+
+        return {
+            createGame: createGame,
+            movePiece: movePiece
+        };
+    })();
     
-    var chess = null;
-
-    function create() {
-        var fenRecord = document.getElementById("fenRecord").value;
-        chess = new Chess(fenRecord);
-
-         drawBoard();
-
-         updateGameLog();
-    }
-
-    function move(){
-        var from = document.getElementById("from").value;
-        var to = document.getElementById("to").value;
-
-        chess.move(from, to);
-
-        drawBoard();
-
-        updateGameLog();
-    }
-
-    function drawBoard() {
-        var ascii = chess.ascii();
-
-        var board = document.getElementById("board");
-        board.innerHTML = ascii;
-
-        var turn = document.getElementById("players-turn");
-        turn.innerHTML = chess.playersTurn();
-    }
-
-    function updateGameLog(){
-        var node = document.createElement("LI");                 
-        var textnode = document.createTextNode(chess.FEN());        
-        node.appendChild(textnode);                              
-        document.getElementById("game-log").appendChild(node);
-    }
-
-  </script>
+    chessModule.createGame();
+</script>
